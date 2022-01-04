@@ -1,0 +1,106 @@
+#----------------------------------------------------------------------------
+#       Macros
+#----------------------------------------------------------------------------
+CC            = gcc
+CXX           = g++
+LD            = $(CXX) $(CCFLAGS) $(CPPFLAGS)
+AR            = ar
+PICFLAGS      = -fPIC
+CPPFLAGS      = $(PICFLAGS) $(GENFLAGS) -std=c++11 -D_REENTRANT
+OBJEXT        = .o
+OUTPUT_OPTION = -o "$@"
+COMPILE.c     = $(CC) $(CFLAGS) $(CPPFLAGS) -c
+COMPILE.cc    = $(CXX) $(CCFLAGS) $(CPPFLAGS) -c
+LDFLAGS       = -L"."
+CCC           = $(CXX)
+MAKEFILE      = Makefile.assignment4
+DEPENDENCIES  = .depend.$(MAKEFILE)
+BTARGETDIR    = ./
+BIN           = $(BTARGETDIR)tcalc$(EXESUFFIX)$(EXEEXT)
+CAT           = cat
+MV            = mv -f
+RM            = rm -rf
+CP            = cp -p
+NUL           = /dev/null
+MKDIR         = mkdir -p
+TESTDIRSTART  = test -d
+TESTDIREND    = ||
+TOUCH         = touch
+EXEEXT        = 
+LIBPREFIX     = lib
+LIBSUFFIX     = 
+GENFLAGS      = -O
+LDLIBS        = -ldl $(subst lib,-l,$(sort $(basename $(notdir $(wildcard /usr/lib/librt.so /lib/librt.so))))) -lpthread
+OBJS          = driver$(OBJEXT) Bin_Node$(OBJEXT) Add_Node$(OBJEXT) Sub_Node$(OBJEXT) Div_Node$(OBJEXT) Mult_Node$(OBJEXT) Mod_Node$(OBJEXT) Num_Node$(OBJEXT) Expression_Tree$(OBJEXT) Expression_Tree_Builder$(OBJEXT) Eval_Expr_Tree$(OBJEXT) Calculator$(OBJEXT)
+SRC           = driver.cpp Bin_Node.cpp Add_Node.cpp Sub_Node.cpp Div_Node.cpp Mult_Node.cpp Mod_Node.cpp Num_Node.cpp Expression_Tree.cpp Expression_Tree_Builder.cpp Eval_Expr_Tree.cpp Calculator.cpp
+LINK.cc       = $(LD) $(LDFLAGS)
+EXPORTFLAGS   = 
+DEPLIBS       = $(foreach lib, , $(foreach libpath, ., $(wildcard $(libpath)/lib$(lib).a)))
+
+#----------------------------------------------------------------------------
+#       Local targets
+#----------------------------------------------------------------------------
+
+all: $(BIN)
+
+$(BIN): $(OBJS) $(DEPLIBS)
+	@$(TESTDIRSTART) "$(BTARGETDIR)" $(TESTDIREND) $(MKDIR) "$(BTARGETDIR)"
+	$(LINK.cc) $(OBJS) $(LDLIBS) $(OUTPUT_OPTION)
+
+generated: $(GENERATED_DIRTY)
+	@-:
+
+driver$(OBJEXT): driver.cpp
+	$(COMPILE.cc) $(EXPORTFLAGS) $(OUTPUT_OPTION) driver.cpp
+
+Bin_Node$(OBJEXT): Bin_Node.cpp
+	$(COMPILE.cc) $(EXPORTFLAGS) $(OUTPUT_OPTION) Bin_Node.cpp
+
+Add_Node$(OBJEXT): Add_Node.cpp
+	$(COMPILE.cc) $(EXPORTFLAGS) $(OUTPUT_OPTION) Add_Node.cpp
+
+Sub_Node$(OBJEXT): Sub_Node.cpp
+	$(COMPILE.cc) $(EXPORTFLAGS) $(OUTPUT_OPTION) Sub_Node.cpp
+
+Div_Node$(OBJEXT): Div_Node.cpp
+	$(COMPILE.cc) $(EXPORTFLAGS) $(OUTPUT_OPTION) Div_Node.cpp
+
+Mult_Node$(OBJEXT): Mult_Node.cpp
+	$(COMPILE.cc) $(EXPORTFLAGS) $(OUTPUT_OPTION) Mult_Node.cpp
+
+Mod_Node$(OBJEXT): Mod_Node.cpp
+	$(COMPILE.cc) $(EXPORTFLAGS) $(OUTPUT_OPTION) Mod_Node.cpp
+
+Num_Node$(OBJEXT): Num_Node.cpp
+	$(COMPILE.cc) $(EXPORTFLAGS) $(OUTPUT_OPTION) Num_Node.cpp
+
+Expression_Tree$(OBJEXT): Expression_Tree.cpp
+	$(COMPILE.cc) $(EXPORTFLAGS) $(OUTPUT_OPTION) Expression_Tree.cpp
+
+Expression_Tree_Builder$(OBJEXT): Expression_Tree_Builder.cpp
+	$(COMPILE.cc) $(EXPORTFLAGS) $(OUTPUT_OPTION) Expression_Tree_Builder.cpp
+
+Eval_Expr_Tree$(OBJEXT): Eval_Expr_Tree.cpp
+	$(COMPILE.cc) $(EXPORTFLAGS) $(OUTPUT_OPTION) Eval_Expr_Tree.cpp
+
+Calculator$(OBJEXT): Calculator.cpp
+	$(COMPILE.cc) $(EXPORTFLAGS) $(OUTPUT_OPTION) Calculator.cpp
+
+clean:
+	-$(RM) $(OBJS)
+
+realclean: clean
+	-$(RM) $(BIN)
+
+check-syntax:
+	$(COMPILE.cc) $(EXPORTFLAGS) -Wall -Wextra -pedantic -fsyntax-only $(CHK_SOURCES)
+
+#----------------------------------------------------------------------------
+#       Dependencies
+#----------------------------------------------------------------------------
+
+
+depend:
+	-$(MPC_ROOT)/depgen.pl  $(CFLAGS) $(CCFLAGS) $(CPPFLAGS) -f $(DEPENDENCIES) $(SRC) 2> $(NUL)
+
+-include $(DEPENDENCIES)

@@ -1,0 +1,31 @@
+project(assignment4){
+
+	exename = tcalc
+	install = .
+
+	specific(make, gnuace){
+		compile_flags += -std=c++11
+	}
+	Header_Files{
+		Builder.h
+		Node_Visitor.h
+		Expr_Node.h
+	}
+
+	Source_Files{
+		driver.cpp
+		Bin_Node.cpp
+		Add_Node.cpp
+		Sub_Node.cpp
+		Div_Node.cpp
+		Mult_Node.cpp
+		Mod_Node.cpp
+		Num_Node.cpp
+		Expression_Tree.cpp
+		Expression_Tree_Builder.cpp
+		Eval_Expr_Tree.cpp
+		Calculator.cpp
+		
+	}
+
+}
